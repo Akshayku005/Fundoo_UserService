@@ -35,7 +35,7 @@ public interface IUserService {
 
     ResponseDTO addProfilePic(Long id, MultipartFile profilePic) throws IOException;
 
-////	UserModel setprofilepic( File profilefile,Long id,String token);
-//	Response uploadProfilePic(MultipartFile multipartFile, String token);
+    Boolean validateEmail(String emailId);
+
 
 }

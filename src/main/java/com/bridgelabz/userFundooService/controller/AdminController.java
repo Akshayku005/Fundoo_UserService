@@ -111,6 +111,10 @@ public class AdminController {
     public Boolean validateUser(@PathVariable String token) {
         return userService.validateUser(token);
     }
+    @GetMapping("/validateemail/{emailId}")
+    public Boolean validateEmail(@PathVariable String emailId) {
+        return userService.validateEmail(emailId);
+    }
 
     /**
      * Purpose:To delete the user

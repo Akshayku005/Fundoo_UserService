@@ -158,8 +158,9 @@ public class UserService implements IUserService {
     public Boolean validateUser(String token) {
         Long decode = util.decodeToken(token);
         Optional<User> isTokenPresent = repository.findById(decode);
-        if (isTokenPresent.isPresent())
+        if (isTokenPresent.isPresent()){
             return true;
+        }
         throw new AdminException(HttpStatus.NOT_FOUND, "Token not found");
     }
 
@@ -210,6 +211,16 @@ public class UserService implements IUserService {
             return new ResponseDTO("Success",  isIdPresent.get());
         }
         throw new AdminException(HttpStatus.NOT_FOUND, "User not found");
+    }
+
+    @Override
+    public Boolean validateEmail(String emailId) {
+        Optional<User> isEmailPresent = repository.findByEmail(emailId);
+        if (isEmailPresent.isPresent()) {
+            return true;
+        }else {
+            return false;
+        }
     }
 }
 
