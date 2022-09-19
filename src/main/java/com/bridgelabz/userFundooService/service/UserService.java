@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +35,17 @@ public class UserService implements IUserService {
         if (userEmail.isPresent()) {
             throw new AdminException(HttpStatus.BAD_REQUEST, "Email already exists, Please enter other email!!");
         } else {
+            newUser.setIsActive(false);
+            newUser.setIsDeleted(false);
+            newUser.setName(userDto.getName());
+            newUser.setEmail(userDto.getEmail());
+            newUser.setPassword(userDto.getPassword());
+            newUser.setDob(userDto.getDob());
+            newUser.setPhoneNo(userDto.getPhoneNo());
             repository.save(newUser);
             String token = util.createToken((int) newUser.getId());
             mailSender.sendEmail(newUser.getEmail(), "Test Email", "Registered SuccessFully, hii: "
-                    + newUser.getName() + " Please Click here to get data-> "
-                    + "http://localhost:8081/user/findById/" + token);
+                    + newUser.getName() + " Please Activate your account");
             return token;
         }
     }
@@ -52,13 +59,12 @@ public class UserService implements IUserService {
                 updateUser.get().setName(userDto.getName());
                 updateUser.get().setEmail(userDto.getEmail());
                 updateUser.get().setPassword(userDto.getPassword());
-                updateUser.get().setUpdatedAt(userDto.getUpdatedAt().now());
+                updateUser.get().setUpdatedAt(LocalDateTime.now());
                 updateUser.get().setDob(userDto.getDob());
                 updateUser.get().setPhoneNo(userDto.getPhoneNo());
                 repository.save(updateUser.get());
                 mailSender.sendEmail(updateUser.get().getEmail(), "Test Email", "User updated Successfully, hii: "
-                        + updateUser.get().getName() + " Please Click here to get data-> "
-                        + "http://localhost:8081/user/findById/" + token);
+                        + updateUser.get().getName() + " your details updated");
                 return updateUser.get();
             } else
                 throw new AdminException(HttpStatus.NOT_FOUND, "User Details using id not found");
@@ -96,9 +102,16 @@ public class UserService implements IUserService {
         if (userData.isPresent()) {
             if (userData.get().getPassword().equals(adminLoginDTO.getPassword())) {
                 String token = util.createToken((int) userData.get().getId());
-                mailSender.sendEmail(userData.get().getEmail(), "Test Email", "Login successfull , hii: "
-                        + userData.get().getName() + " Welcome back !!");
-                return new ResponseDTO("User login succesfull", token);
+                if (userData.get().getIsActive() == true) {
+                    mailSender.sendEmail(userData.get().getEmail(), "Login successfull", "You have logged in successfully !!"
+                            + userData.get().getName() + " Welcome back!! ");
+                    return new ResponseDTO("User login succesfull", token);
+                } else {
+                    mailSender.sendEmail(userData.get().getEmail(), "Activation email", "please click below link to Activate your account "
+                            + userData.get().getName() + " Please Click here -> "
+                            + "http://localhost:8081/admin/activateuser/" + token);
+                    return new ResponseDTO("Please click your mail to Activate your account", token);
+                }
             }
             throw new AdminException(HttpStatus.NOT_ACCEPTABLE, "Invalid credentials, password is incorrect !!");
         }
@@ -158,7 +171,7 @@ public class UserService implements IUserService {
     public Boolean validateUser(String token) {
         Long decode = util.decodeToken(token);
         Optional<User> isTokenPresent = repository.findById(decode);
-        if (isTokenPresent.isPresent()){
+        if (isTokenPresent.isPresent()) {
             return true;
         }
         throw new AdminException(HttpStatus.NOT_FOUND, "Token not found");
@@ -202,13 +215,14 @@ public class UserService implements IUserService {
         }
         throw new AdminException(HttpStatus.NOT_FOUND, "Invalid token");
     }
+
     @Override
-    public ResponseDTO addProfilePic(Long id, MultipartFile  profilePic) throws IOException {
+    public ResponseDTO addProfilePic(Long id, MultipartFile profilePic) throws IOException {
         Optional<User> isIdPresent = repository.findById(id);
-        if(isIdPresent.isPresent()) {
+        if (isIdPresent.isPresent()) {
             isIdPresent.get().setProfilePic(String.valueOf(profilePic.getOriginalFilename()));
             repository.save(isIdPresent.get());
-            return new ResponseDTO("Success",  isIdPresent.get());
+            return new ResponseDTO("Success", isIdPresent.get());
         }
         throw new AdminException(HttpStatus.NOT_FOUND, "User not found");
     }
@@ -218,9 +232,23 @@ public class UserService implements IUserService {
         Optional<User> isEmailPresent = repository.findByEmail(emailId);
         if (isEmailPresent.isPresent()) {
             return true;
-        }else {
+        } else {
             return false;
         }
+    }
+
+    @Override
+    public ResponseDTO makeActivation(String token) {
+        Long decode = util.decodeToken(token);
+        Optional<User> user = repository.findById(decode);
+        if (user.isPresent()) {
+            user.get().setIsActive(true);
+            repository.save(user.get());
+            mailSender.sendEmail(user.get().getEmail(), "Account Activated", "Your account Activated successfully  "
+                    + user.get().getName() + "Feel free to visit our wedsite ");
+            return new ResponseDTO("Account Activated successfully", user);
+        }
+        throw new AdminException(HttpStatus.FOUND, "user not found !!");
     }
 }
 

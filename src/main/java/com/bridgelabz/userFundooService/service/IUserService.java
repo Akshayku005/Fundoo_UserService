@@ -36,6 +36,7 @@ public interface IUserService {
     ResponseDTO addProfilePic(Long id, MultipartFile profilePic) throws IOException;
 
     Boolean validateEmail(String emailId);
+    ResponseDTO makeActivation(String token);
 
 
 }

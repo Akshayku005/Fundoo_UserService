@@ -159,10 +159,17 @@ public class AdminController {
      * @purpose Ability to add profile pic
      * @throws IOException
      */
-    @PostMapping("/addprofilepic/{id}")
+    @PostMapping("addprofilepic/{id}")
     public ResponseEntity<ResponseDTO> addProfilePic(@PathVariable Long id, @RequestParam MultipartFile profilePic) throws IOException {
         ResponseDTO userModel = userService.addProfilePic(id, profilePic);
         ResponseDTO response = new ResponseDTO("Profile pic uploaded sucessfully ", userModel);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("activateuser/{token}")
+    public ResponseEntity<ResponseDTO> activateUser(@PathVariable String token){
+        ResponseDTO userModel = userService.makeActivation(token);
+        ResponseDTO response = new ResponseDTO("Account Activated successfully ", userModel);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

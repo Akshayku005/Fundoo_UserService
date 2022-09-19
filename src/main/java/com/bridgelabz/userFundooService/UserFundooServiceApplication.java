@@ -9,7 +9,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableEurekaClient
 public class UserFundooServiceApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(UserFundooServiceApplication.class, args);
 		System.out.println("Welcome to admin Service");

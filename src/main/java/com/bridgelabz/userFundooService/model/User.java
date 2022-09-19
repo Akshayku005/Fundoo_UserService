@@ -21,7 +21,7 @@ public class User {
     private String name;
     @Column(name = "Email")
     private String email;
-
+    @Column(name = "Password")
     private String password;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -29,11 +29,9 @@ public class User {
     private LocalDateTime updatedAt;
 
     private Boolean isActive;
-
     private Boolean isDeleted;
-
     private String dob;
-
+    @Column(name = "Phone_Number")
     private String phoneNo;
     private String profilePic;
 
@@ -41,10 +39,10 @@ public class User {
         this.name = userDTO.getName();
         this.email = userDTO.getEmail();
         this.password = userDTO.getPassword();
-        this.createdAt = userDTO.getCreatedAt();
-        this.updatedAt = userDTO.getUpdatedAt();
-        this.isActive = userDTO.getIsActive();
-        this.isDeleted = userDTO.getIsDeleted();
+//        this.createdAt = userDTO.getCreatedAt();
+//        this.updatedAt = userDTO.getUpdatedAt();
+//        this.isActive = userDTO.getIsActive();
+//        this.isDeleted = userDTO.getIsDeleted();
         this.dob = userDTO.getDob();
         this.password = userDTO.getPhoneNo();
 
@@ -55,10 +53,10 @@ public class User {
         this.name = userDto.getName();
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
-        this.createdAt = userDto.getCreatedAt();
-        this.updatedAt = userDto.getUpdatedAt();
-        this.isActive = userDto.getIsActive();
-        this.isDeleted = userDto.getIsDeleted();
+//        this.createdAt = userDto.getCreatedAt();
+//        this.updatedAt = userDto.getUpdatedAt();
+//        this.isActive = userDto.getIsActive();
+//        this.isDeleted = userDto.getIsDeleted();
         this.dob = userDto.getDob();
         this.password = userDto.getPhoneNo();
     }

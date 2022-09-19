@@ -19,12 +19,8 @@ public class UserDTO {
     private String email;
     @NotEmpty(message = "Enter your password")
     private String password;
-    private LocalDateTime createdAt= LocalDateTime.now();
-    private LocalDateTime updatedAt;
-    private Boolean isActive;
-    private Boolean isDeleted;
     @Pattern(regexp = "^\\d{2}-\\d{2}-\\d{4}$", message = "date of birth must be in DD-MM-YYYY format")
     private String dob;
-    @Pattern(regexp = "[8 9][0-9]{9}", message = "Invalid number, phone number should contain 10 digits")
+    @Pattern(regexp = "[7 8 9][0-9]{9}", message = "Invalid number, phone number should contain 10 digits")
     private String phoneNo;
 }
